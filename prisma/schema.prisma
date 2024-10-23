@@ -1,0 +1,97 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = "postgresql://admin001:uwHjQ6N8L9x!@localhost:5432/service-database?schema=public"
+}
+
+model User {
+  id     String @id @default(cuid())
+  email  String @unique
+  f_name String
+  l_name String
+  tel    String
+
+  password String
+  role     Role?  @default(USER)
+
+  published Boolean? @default(true)
+
+  create_at  DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  group Group[]
+}
+
+model Group {
+  id   String @id @default(cuid())
+  name String
+
+  create_at  DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id])
+
+  cate Category[]
+}
+
+model Category {
+  id   String @id @default(cuid())
+  name String
+
+  create_at  DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  groupId String?
+  group   Group?  @relation(fields: [groupId], references: [id])
+
+  sub_cate Sub_category[]
+}
+
+model Sub_category {
+  id   String @id @default(cuid())
+  name String
+
+  create_at  DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  categoryId String?
+  catagory       Category? @relation(fields: [categoryId], references: [id])
+
+  knowledge Khowledge[]
+}
+
+model Khowledge {
+  id String @id @default(cuid())
+
+  title       String
+  description String?
+  content     String?
+
+  type  String
+  path  String?
+  group String?
+  tag   String?
+
+  published Boolean? @default(false)
+
+  create_at  DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  sub_categoryId String?
+  sub_category   Sub_category? @relation(fields: [sub_categoryId], references: [id])
+}
+
+enum Role {
+  USER
+  ADMIN
+}

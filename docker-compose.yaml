@@ -1,0 +1,31 @@
+version: '3.8'
+
+name : "service-api"
+
+services:
+  database:
+    image: postgres:latest
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./volume:/var/lib/postgresql/data
+    env_file:
+      - .env.development
+  
+  minio:
+    image: minio/minio:latest
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+
+    volumes:
+      - ./volume:/data
+    command: server --address ":9001" --console-address ":9000" /data
+    env_file:
+      - .env.development
+    restart: always
+
+networks:                                
+  default:                               
+    driver: bridge
