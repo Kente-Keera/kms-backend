@@ -6,6 +6,7 @@ import { KnowledgesModule } from './knowledges/knowledges.module';
 import { SubCateModule } from './sub_cate/sub_cate.module';
 import { CatagoryModule } from './catagory/catagory.module';
 import { GroupModule } from './group/group.module';
+import { CommentsModule } from './comments/comments.module';
 
 const env = process.env.NODE_ENV;
 
@@ -20,6 +21,7 @@ const env = process.env.NODE_ENV;
     SubCateModule,
     CatagoryModule,
     GroupModule,
+    CommentsModule,
   ],
 })
 export class AppModule {}

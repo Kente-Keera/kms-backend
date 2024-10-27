@@ -16,6 +16,9 @@ export class CreateUserDto {
   tel: string;
 
   @IsNotEmpty()
+  employee: string;
+
+  @IsNotEmpty()
   password: string;
 
   @IsNotEmpty()

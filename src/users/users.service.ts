@@ -40,6 +40,7 @@ export class UsersService {
           email: data.email,
           role: data.role,
           published: data.published,
+          employee: data.employee,
         },
       });
     }

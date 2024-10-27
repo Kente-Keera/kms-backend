@@ -8,6 +8,7 @@ import {
   Delete,
   UseInterceptors,
   UploadedFile,
+  Query,
 } from '@nestjs/common';
 import { KnowledgesService } from './knowledges.service';
 import { CreateKnowledgeDto } from './dto/create-knowledge.dto';
@@ -32,9 +33,14 @@ export class KnowledgesController {
     return this.knowledgesService.findAll();
   }
 
+  @Get('search')
+  findOne(@Query('keyword') search: string) {
+    return this.knowledgesService.findOne(search);
+  }
+
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.knowledgesService.findOne(+id);
+  findOneById(@Param('id') id: string) {
+    return this.knowledgesService.findById(id);
   }
 
   @Patch(':id')

@@ -16,6 +16,8 @@ datasource db {
 model User {
   id     String @id @default(cuid())
   email  String @unique
+  
+  employee String @unique
   f_name String
   l_name String
   tel    String
@@ -28,7 +30,24 @@ model User {
   create_at  DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  group Group[]
+  group   Group[]
+  comment Comment[]
+}
+
+model Comment {
+  id String @id @default(cuid())
+
+  mes    String?
+  rating Int?
+
+  create_at  DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  User   User?   @relation(fields: [userId], references: [id])
+  userId String?
+
+  Khowledge   Khowledge? @relation(fields: [khowledgeId], references: [id])
+  khowledgeId String?
 }
 
 model Group {
@@ -65,7 +84,7 @@ model Sub_category {
   updated_at DateTime @updatedAt
 
   categoryId String?
-  catagory       Category? @relation(fields: [categoryId], references: [id])
+  catagory   Category? @relation(fields: [categoryId], references: [id])
 
   knowledge Khowledge[]
 }
@@ -80,7 +99,7 @@ model Khowledge {
   type  String
   path  String?
   group String?
-  tag   String?
+  tag   Json?
 
   published Boolean? @default(false)
 
@@ -89,6 +108,8 @@ model Khowledge {
 
   sub_categoryId String?
   sub_category   Sub_category? @relation(fields: [sub_categoryId], references: [id])
+
+  comment Comment[]
 }
 
 enum Role {

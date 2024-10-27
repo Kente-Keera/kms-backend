@@ -1,3 +1,4 @@
+import { Comment } from './../../node_modules/.prisma/client/index.d';
 import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { CreateKnowledgeDto } from './dto/create-knowledge.dto';
 import { UpdateKnowledgeDto } from './dto/update-knowledge.dto';
@@ -47,11 +48,90 @@ export class KnowledgesService {
   }
 
   async findAll(): Promise<any> {
-    return this.prisma.khowledge.findMany();
+    const knowledgeList = await this.prisma.khowledge.findMany({
+      include: {
+        comment: true,
+      },
+    });
+
+    return knowledgeList.map((knowledge) => {
+      const { comment } = knowledge;
+
+      // Calculate the average rating from comments
+      const avgRating =
+        comment.length > 0
+          ? comment.reduce((sum, { rating }) => sum + rating, 0) /
+            comment.length
+          : null;
+
+      return {
+        ...knowledge,
+        avg_rating: avgRating, // Add the calculated average rating to the response
+      };
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} knowledge`;
+  async findOne(search: string): Promise<any> {
+    const knowledgeList = await this.prisma.khowledge.findMany({
+      where: {
+        OR: [
+          {
+            title: {
+              contains: search || '',
+            },
+          },
+          {
+            description: {
+              contains: search || '',
+            },
+          },
+          {
+            content: {
+              contains: search || '',
+            },
+          },
+          {
+            group: {
+              contains: search || '',
+            },
+          },
+        ],
+        published: true,
+      },
+      include: {
+        comment: true,
+      },
+    });
+
+    return knowledgeList.map((knowledge) => {
+      const { comment } = knowledge;
+
+      // Calculate the average rating from comments
+      const avgRating =
+        comment.length > 0
+          ? comment.reduce((sum, { rating }) => sum + rating, 0) /
+            comment.length
+          : null;
+
+      return {
+        ...knowledge,
+        avg_rating: avgRating, // Add the calculated average rating to the response
+      };
+    });
+  }
+
+  async findById(id: string): Promise<any> {
+    const knowledge = await this.prisma.khowledge.findFirst({
+      where: {
+        id: id,
+        published: true,
+      },
+      include: {
+        comment: true,
+      },
+    });
+
+    return knowledge;
   }
 
   update(id: number, updateKnowledgeDto: UpdateKnowledgeDto) {
