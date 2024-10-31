@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { SubCateService } from './sub_cate.service';
 import { CreateSubCateDto } from './dto/create-sub_cate.dto';
@@ -26,8 +27,14 @@ export class SubCateController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.subCateService.findOne(+id);
+  findOne(
+    @Param('id') id: string,
+    @Query()
+    key: {
+      rate: number;
+    },
+  ) {
+    return this.subCateService.findOne(id,key.rate);
   }
 
   @Patch(':id')

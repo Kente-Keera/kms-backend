@@ -55,6 +55,13 @@ export class UsersService {
       where: {
         email,
       },
+      include: {
+        knowledge: {
+          include : {
+            comment : true
+          }
+        },
+      },
     });
   }
 }

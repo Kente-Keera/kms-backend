@@ -30,6 +30,9 @@ model User {
   create_at  DateTime @default(now())
   updated_at DateTime @updatedAt
 
+
+  knowledge Khowledge[]
+  
   group   Group[]
   comment Comment[]
 }
@@ -101,13 +104,16 @@ model Khowledge {
   group String?
   tag   Json?
 
-  published Boolean? @default(false)
+  published Boolean? @default(true)
 
   create_at  DateTime @default(now())
   updated_at DateTime @updatedAt
 
   sub_categoryId String?
   sub_category   Sub_category? @relation(fields: [sub_categoryId], references: [id])
+
+  userId String?
+  user   User? @relation(fields: [userId], references: [id])
 
   comment Comment[]
 }

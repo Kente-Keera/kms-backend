@@ -4,7 +4,6 @@ import { CreateKnowledgeDto } from './dto/create-knowledge.dto';
 import { UpdateKnowledgeDto } from './dto/update-knowledge.dto';
 import { PrismaService } from '../prisma.service';
 import { saveFiletToBucket, deleteFileFormBucket } from './minio.config';
-import { config } from 'dotenv';
 
 @Injectable()
 export class KnowledgesService {
@@ -35,6 +34,8 @@ export class KnowledgesService {
       group: data.group,
       tag: data.tag,
       sub_categoryId: data.sub_categoryId,
+      userId: data.userId,
+      // published : data.published
     };
 
     try {
@@ -127,11 +128,27 @@ export class KnowledgesService {
         published: true,
       },
       include: {
-        comment: true,
+        comment: {
+          include : {
+            User :true
+          }
+        },
       },
     });
 
-    return knowledge;
+    if (!knowledge) return null; // Return null if no knowledge is found
+
+    // Calculate the average rating from comments
+    const { comment } = knowledge;
+    const avgRating =
+      comment.length > 0
+        ? comment.reduce((sum, { rating }) => sum + rating, 0) / comment.length
+        : null;
+
+    return {
+      ...knowledge,
+      avg_rating: avgRating, // Add the calculated average rating to the response
+    };
   }
 
   update(id: number, updateKnowledgeDto: UpdateKnowledgeDto) {
